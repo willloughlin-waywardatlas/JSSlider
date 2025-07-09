@@ -2,9 +2,7 @@ window.addEventListener("load", (event) => {
   const sliderElements = document.querySelectorAll('.slider');
   const rootStyles = getComputedStyle(document.documentElement);
   const transitionTime = parseFloat(rootStyles.getPropertyValue('--transition-time').trim());
-  // const contentWidth = parseFloat(rootStyles.getPropertyValue('--content-width').trim());
   const gap = parseFloat(rootStyles.getPropertyValue('--gap').trim());
-  // const totalSlideSize = contentWidth + gap;
 
   sliderElements.forEach(slider => {
     let speed = parseFloat(slider.dataset.speed) || 5000;
@@ -39,8 +37,13 @@ window.addEventListener("load", (event) => {
     });
 
     slider.addEventListener('mouseleave', () => {
-      prevBtn.style.opacity = '0';
-      nextBtn.style.opacity = '0';
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        prevBtn.style.opacity = '0.7';
+        nextBtn.style.opacity = '0.7';
+      } else {
+        prevBtn.style.opacity = '0';
+        nextBtn.style.opacity = '0';
+      }
     });
 
     const prependSlides = () => {
@@ -101,8 +104,3 @@ window.addEventListener("load", (event) => {
     });
   });
 });
-
-
-
-
-
