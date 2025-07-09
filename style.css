@@ -1,14 +1,36 @@
 :root {
 	--icon-size: 35px;
+	--content-width: 500px;
+	--gap: 10px;
+	--transition-time: 1s;
 }
 
-.slider-container {
+.slider-content-container {
+/*	margin-left: calc((var(--content-width) / 2) * -1);*/
 	display: flex;
-	gap: 10px;
+/*	gap: 10px;*/
+}
+
+.slide {
+	width: calc(var(--content-width) + var(--gap));
+/*	overflow: hidden;*/
+  transition: 
+	  margin-left var(--transition-time),
+	  width var(--transition-time);
+	display: flex;
+	justify-content: flex-end;
+}
+
+.slider-content-container img {
+	width: var(--content-width);
+	margin-right: var(--gap);
 }
 
 .slider {
 	position: relative;
+	overflow: hidden;
+	margin-top: var(--gap);
+	margin-bottom: var(--gap);
 }
 
 .slider-controls {
@@ -16,7 +38,7 @@
   justify-content: space-between;
   position: absolute;
   width: 100%;
-  top: calc(50% - calc(var(--icon-size) / 2));
+  top: calc(50% - (var(--icon-size) / 2 + var(--icon-size) / 6));
 }
 
 .slider-controls .material-icons{
@@ -29,13 +51,19 @@
   background: #ffffff75;
   padding: calc(var(--icon-size)/6);
   border-radius: 50%;
+  cursor: pointer;
 }
 
-.sb-left {
+.sb-left, .sb-right {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sb-left i {
 	padding-left: calc(var(--icon-size)/6);
 }
 
-.sb-right{
+.sb-right i {
 	padding-left: calc(var(--icon-size)/11);
 }
 
