@@ -1,0 +1,41 @@
+:root {
+	--icon-size: 35px;
+}
+
+.slider-container {
+	display: flex;
+	gap: 10px;
+}
+
+.slider {
+	position: relative;
+}
+
+.slider-controls {
+	display: flex;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  top: calc(50% - calc(var(--icon-size) / 2));
+}
+
+.slider-controls .material-icons{
+	font-size: var(--icon-size);
+}
+
+.slider-button {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  background: #ffffff75;
+  padding: calc(var(--icon-size)/6);
+  border-radius: 50%;
+}
+
+.sb-left {
+	padding-left: calc(var(--icon-size)/6);
+}
+
+.sb-right{
+	padding-left: calc(var(--icon-size)/11);
+}
+
