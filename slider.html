@@ -12,8 +12,11 @@
   <body>
     <script src="slider.js"></script>
     <h1>JS slider example page</h1>
-    <p>The slider will automatically advance a slide every 5 seconds unless the user manually interacts with the slide control buttons. Slide control buttons are hidden until mouseover. Slide controls are locked during transition for stability purposes.</p>
-    <div class="slider">
+    <p>The slider will automatically advance a slide every 5 seconds unless the user manually interacts with the slide control buttons. Slide control buttons are hidden until mouseover. Slide controls are locked during transition for stability purposes.
+
+    Set data-speed and data-size on the slider element to set custom image size and rate of automatic progress.
+    </p>
+    <div class="slider" data-speed="2000" data-size="200">
       <div class="slider-controls">
         <div class="slider-button sb-left">
           <i class="material-icons">arrow_back_ios</i>

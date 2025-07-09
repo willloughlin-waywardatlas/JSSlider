@@ -1,17 +1,15 @@
 window.addEventListener("load", (event) => {
   const sliderElements = document.querySelectorAll('.slider');
-  // const buttons = document.querySelectorAll('.slider-button');
   const rootStyles = getComputedStyle(document.documentElement);
   const transitionTime = parseFloat(rootStyles.getPropertyValue('--transition-time').trim());
-  const contentWidth = parseFloat(rootStyles.getPropertyValue('--content-width').trim());
+  // const contentWidth = parseFloat(rootStyles.getPropertyValue('--content-width').trim());
   const gap = parseFloat(rootStyles.getPropertyValue('--gap').trim());
-  const totalSlideSize = contentWidth + gap;
-
-  // buttons.forEach((el) => {
-  //   el.style.opacity = '1';
-  // })
+  // const totalSlideSize = contentWidth + gap;
 
   sliderElements.forEach(slider => {
+    let speed = parseFloat(slider.dataset.speed) || 5000;
+    let contentWidth = parseFloat(slider.dataset.size) || 500;
+    const totalSlideSize = contentWidth + gap;
     const prevBtn = slider.querySelector('.sb-left');
     const nextBtn = slider.querySelector('.sb-right');
     const container = slider.querySelector('.slider-content-container')
@@ -20,13 +18,19 @@ window.addEventListener("load", (event) => {
     let lastSlide = slides[slides.length - 1];
     let timeoutId;
 
+    slides.forEach((slide) => {
+      const image = slide.querySelector('img');
+      slide.style.width = `${totalSlideSize}px`;
+      image.style.width = `${contentWidth}px`;
+    })
+
     const startTimeout = () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
       timeoutId = setTimeout(() => {
         slidesForward();
-      }, 5000);
+      }, speed);
     }
 
     slider.addEventListener('mouseenter', () => {

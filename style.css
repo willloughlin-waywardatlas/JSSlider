@@ -37,8 +37,10 @@
 	display: flex;
   justify-content: space-between;
   position: absolute;
-  width: 100%;
+  width: calc(100% - ( var(--gap) * 2 ));
   top: calc(50% - (var(--icon-size) / 2 + var(--icon-size) / 6));
+  padding-left: var(--gap);
+  padding-right: var(--gap);
 }
 
 .slider-controls .material-icons{
