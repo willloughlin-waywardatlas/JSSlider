@@ -4,7 +4,58 @@ window.addEventListener("load", (event) => {
   const transitionTime = parseFloat(rootStyles.getPropertyValue('--transition-time').trim());
   const gap = parseFloat(rootStyles.getPropertyValue('--gap').trim());
 
+  //set up lightbox
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+
+  const expandedContent = document.createElement('div');
+  expandedContent.className = 'expanded-content';
+
+  const closeIcon = document.createElement('i');
+  closeIcon.className = 'material-icons';
+  closeIcon.textContent = 'close';
+
+  const lightboxParagraph = document.createElement('p');
+  lightboxParagraph.className = 'text-content';
+
+  expandedContent.appendChild(closeIcon);
+  expandedContent.appendChild(lightboxParagraph);
+  lightbox.appendChild(expandedContent);
+  document.body.appendChild(lightbox);
+
+  //light box behaviour
+  const resetLightbox = () => {
+    lightbox.style.display = 'none';
+    const clonedContent = expandedContent.querySelector('img');
+    if (clonedContent) clonedContent.remove();
+  }
+
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === this) {
+      resetLightbox();
+    }
+  });
+
+  closeIcon.addEventListener('click', function (e) {
+    resetLightbox();
+  });
+
   sliderElements.forEach(slider => {
+    slider.addEventListener('click', function (e) {
+      const slide = e.target.closest('.slide');
+      if (!slide) return;
+
+      const firstChild = slide.firstElementChild;
+      if (firstChild) {
+        const clonedNode = firstChild.cloneNode(true);
+        clonedNode.style.width = 'auto';
+        expandedContent.insertBefore(clonedNode, expandedContent.lastChild);
+        lightboxParagraph.textContent = clonedNode.alt;
+      }
+
+      lightbox.style.display = "flex";
+    });
+    //set up slider variables
     let speed = parseFloat(slider.dataset.speed) || 5000;
     let contentWidth = parseFloat(slider.dataset.size) || 500;
     const totalSlideSize = contentWidth + gap;
