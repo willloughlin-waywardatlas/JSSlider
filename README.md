@@ -1,6 +1,6 @@
 # JS slider example page
 
-The slider will automatically advance a slide every 5 seconds unless the user manually interacts with the slide control buttons. Slide control buttons are hidden until mouseover. Slide controls are locked during transition for stability purposes.
+The slider will automatically advance a slide every 5 seconds unless the user manually interacts with the slide control buttons. Slide control buttons are hidden until mouseover. Slide controls are locked during transition for stability purposes. Slide content can be moused over and clicked to view larger version in lightbox.
 
 ## Parameter adjustment through data
 The following can be passed as a data-set to the Slider element.
