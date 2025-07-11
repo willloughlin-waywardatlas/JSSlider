@@ -26,7 +26,7 @@ window.addEventListener("load", (event) => {
   //light box behaviour
   const resetLightbox = () => {
     lightbox.style.display = 'none';
-    const clonedContent = expandedContent.querySelector('img');
+    const clonedContent = document.querySelector('.expanded-content :nth-child(2)');
     if (clonedContent) clonedContent.remove();
   }
 
@@ -56,9 +56,12 @@ window.addEventListener("load", (event) => {
       lightbox.style.display = "flex";
     });
     //set up slider variables
+    let thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
+    let delay = parseFloat(slider.dataset.delay) || 0;
+    console.log(delay);
     let speed = parseFloat(slider.dataset.speed) || 5000;
     let contentWidth = parseFloat(slider.dataset.size) || 500;
-    const totalSlideSize = contentWidth + gap;
+    const totalSlideSize = contentWidth + thisGap;
     const prevBtn = slider.querySelector('.sb-left');
     const nextBtn = slider.querySelector('.sb-right');
     const container = slider.querySelector('.slider-content-container')
@@ -67,10 +70,31 @@ window.addEventListener("load", (event) => {
     let lastSlide = slides[slides.length - 1];
     let timeoutId;
 
+    if( thisGap != gap ) {
+      slider.style.paddingTop = `${thisGap}px`;
+      slider.style.paddingBottom = `${thisGap}px`;
+    }
+
+
     slides.forEach((slide) => {
       const image = slide.querySelector('img');
+      const video = slide.querySelector('video');
+      if( thisGap != gap ) {
+        if(image) {
+        image.style.marginRight = `${thisGap}px`;
+        }
+        if(video) {
+          video.style.marginRight = `${thisGap}px`;
+        }
+      }
+
       slide.style.width = `${totalSlideSize}px`;
-      image.style.width = `${contentWidth}px`;
+      if(image) {
+        image.style.width = `${contentWidth}px`;
+      }
+      if(video) {
+        video.style.width = `${contentWidth}px`;
+      }
     })
 
     const startTimeout = () => {
@@ -79,7 +103,7 @@ window.addEventListener("load", (event) => {
       }
       timeoutId = setTimeout(() => {
         slidesForward();
-      }, speed);
+      }, ( speed + delay ));
     }
 
     slider.addEventListener('mouseenter', () => {
@@ -119,6 +143,9 @@ window.addEventListener("load", (event) => {
 
     const slidesForward = () => {
       if(!slider.classList.contains("controlsLocked")){
+        if(delay) {
+          delay = 0;
+        }
         startTimeout();
         appendSlides();
         firstSlide.style.marginLeft = `-${totalSlideSize}px`;
