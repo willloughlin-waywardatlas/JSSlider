@@ -58,7 +58,6 @@ window.addEventListener("load", (event) => {
     //set up slider variables
     let thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
     let delay = parseFloat(slider.dataset.delay) || 0;
-    console.log(delay);
     let speed = parseFloat(slider.dataset.speed) || 5000;
     let contentWidth = parseFloat(slider.dataset.size) || 500;
     const totalSlideSize = contentWidth + thisGap;
