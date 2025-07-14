@@ -7,14 +7,12 @@
 
 .slider-content-container {
 	display: flex;
+  transition: transform var(--transition-time);
 }
 
 .slide {
 	width: calc(var(--content-width) + var(--gap));
-  transition: 
-	  margin-left var(--transition-time),
-	  width var(--transition-time),
-	  transform 0.1s;
+  transition: transform 0.1s;
 	display: flex;
 	justify-content: flex-end;
 }

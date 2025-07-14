@@ -121,12 +121,9 @@ window.addEventListener("load", (event) => {
     });
 
     const prependSlides = () => {
+      container.style.transform = `translateX(${totalSlideSize}px)`;
       const lastSlideCopy = lastSlide.cloneNode(true);
-      lastSlideCopy.style.width = '0px';
       container.prepend(lastSlideCopy);
-      requestAnimationFrame(() => {
-        lastSlideCopy.style.width = `${totalSlideSize}px`;
-      });
     }
 
     const appendSlides = () => {
@@ -141,32 +138,43 @@ window.addEventListener("load", (event) => {
     }
 
     const slidesForward = () => {
-      if(!slider.classList.contains("controlsLocked")){
-        if(delay) {
-          delay = 0;
-        }
+      if (!slider.classList.contains("controlsLocked")) {
+        if (delay) delay = 0;
         startTimeout();
         appendSlides();
-        firstSlide.style.marginLeft = `-${totalSlideSize}px`;
+        container.style.transition = `transform ${transitionTime}s`;
+        container.style.transform = `translateX(-${totalSlideSize}px)`;
         slider.classList.add("controlsLocked");
         setTimeout(() => {
-          firstSlide.remove();
-          updateSlides();
-          slider.classList.remove("controlsLocked");
-        }, `${transitionTime * 1000}`);
+          container.style.transition = "none";
+          requestAnimationFrame(() => {
+            container.style.transform = "translateX(0px)";
+            container.offsetHeight;
+            container.style.transition = `transform ${transitionTime}s`;
+            firstSlide.remove();
+            updateSlides();
+            slider.classList.remove("controlsLocked");
+          });
+        }, transitionTime * 1000);
       }
-    }
+    };
 
     const slidesBack = () => {
       if(!slider.classList.contains("controlsLocked")){
         startTimeout();
         prependSlides();
-        slider.classList.add("controlsLocked");
-        setTimeout(() => {
-          lastSlide.remove();
-          updateSlides();
-          slider.classList.remove("controlsLocked");
-        }, `${transitionTime * 1000}`);
+        container.style.transition = "none";
+        container.style.transform = `translateX(-${totalSlideSize}px)`;
+        requestAnimationFrame(() => {
+          container.style.transition = `transform ${transitionTime}s`;
+          container.style.transform = "translateX(0px)";
+          slider.classList.add("controlsLocked");
+          setTimeout(() => {
+            lastSlide.remove();
+            updateSlides();
+            slider.classList.remove("controlsLocked");
+          }, `${transitionTime * 1000}`);
+        });
       }
     }
 
