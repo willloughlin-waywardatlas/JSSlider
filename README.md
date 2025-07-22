@@ -12,3 +12,5 @@ Float representing pixel width. Helps to control both display size and thumbnail
 In milliseconds, how long to de-sync the slider from the default, usefull when multiple sliders exist within one visible area.
 ### data-gap
 Float representing pixel size, change the default gap used around the slides.
+### data-fit
+Float representing the quantity of slides are required to be shown at any given time, cannot be used with data-size.
