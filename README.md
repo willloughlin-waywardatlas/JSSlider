@@ -14,3 +14,5 @@ In milliseconds, how long to de-sync the slider from the default, usefull when m
 Float representing pixel size, change the default gap used around the slides.
 ### data-fit
 Float representing the quantity of slides are required to be shown at any given time, cannot be used with data-size.
+### data-border
+Float representing border width for the slide images in px. Important note, border itself is to be declared using css. this will just ensure the border is accounted for in positioning and sizing calculations. 

@@ -14,6 +14,7 @@ window.addEventListener("load", (event) => {
       contentWidth = parseFloat(slider.dataset.size) || 500;
     }
     const thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
+    const border = slider.dataset.border != undefined ? parseFloat(slider.dataset.border) : 0;
     return {
       sliderEl: slider,
       gap: slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap,
@@ -24,7 +25,8 @@ window.addEventListener("load", (event) => {
       container: slider.querySelector('.slider-content-container'),
       slides: slider.querySelectorAll('.slide'),
       contentWidth: contentWidth,
-      totalSlideSize: contentWidth + thisGap
+      totalSlideSize: contentWidth + thisGap + (border * 2),
+      border: border
     }
   })
 
@@ -214,8 +216,9 @@ window.addEventListener("load", (event) => {
   function updateDynamicContentWidth(slider) {
     const sliderWidth = slider.getBoundingClientRect().width;
     const thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
+    const border = slider.dataset.border != undefined ? parseFloat(slider.dataset.border) : 0;
     const amountOfSlides = slider.dataset.fit = parseFloat(slider.dataset.fit);
-    const contentWidth = (sliderWidth - (thisGap * (amountOfSlides - 1 ))) / amountOfSlides;
+    const contentWidth = ((sliderWidth - ((amountOfSlides * 2) * border)) - (thisGap * (amountOfSlides - 1 ))) / amountOfSlides;
     return contentWidth;
   }
 
@@ -223,7 +226,8 @@ window.addEventListener("load", (event) => {
     sliderData.forEach((entry) => {
       if( entry.sliderEl.dataset.fit != undefined ) {
         entry.contentWidth = updateDynamicContentWidth(entry.sliderEl);
-        entry.totalSlideSize = entry.contentWidth + entry.gap;
+        entry.totalSlideSize = entry.contentWidth + entry.gap + (entry.border * 2);
+
         entry.slides.forEach((slide) => {
           const image = slide.querySelector('img');
           const video = slide.querySelector('video');

@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="slider.css">
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+      .example-border-class .slide img {
+        border: 1px solid red;
+      }
+    </style>
   </head>
   <body>
     <script src="slider.js"></script>
@@ -79,7 +84,7 @@
     </div>
 
     <div style="width: 75%; margin-left: auto; margin-right: auto;">
-      <div class="slider" data-fit="3">
+      <div class="slider example-border-class" data-fit="3" data-border="1" data-speed="5000">
       <div class="slider-controls">
         <div class="slider-button sb-left">
           <i class="material-icons">arrow_back_ios</i>
