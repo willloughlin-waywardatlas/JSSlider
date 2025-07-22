@@ -1,8 +1,32 @@
 window.addEventListener("load", (event) => {
-  const sliderElements = document.querySelectorAll('.slider');
   const rootStyles = getComputedStyle(document.documentElement);
   const transitionTime = parseFloat(rootStyles.getPropertyValue('--transition-time').trim());
   const gap = parseFloat(rootStyles.getPropertyValue('--gap').trim());
+
+  //set up slider data object
+  const sliderElements = document.querySelectorAll('.slider');
+  const sliderArray = [...document.querySelectorAll('.slider')];
+  const sliderData = sliderArray.map((slider) => {
+    let contentWidth;
+    if( slider.dataset.fit != undefined ) {
+      contentWidth = updateDynamicContentWidth(slider);
+    } else {
+      contentWidth = parseFloat(slider.dataset.size) || 500;
+    }
+    const thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
+    return {
+      sliderEl: slider,
+      gap: slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap,
+      delay: parseFloat(slider.dataset.delay) || 0,
+      speed: parseFloat(slider.dataset.speed) || 5000,
+      prevBtn: slider.querySelector('.sb-left'),
+      nextBtn: slider.querySelector('.sb-right'),
+      container: slider.querySelector('.slider-content-container'),
+      slides: slider.querySelectorAll('.slide'),
+      contentWidth: contentWidth,
+      totalSlideSize: contentWidth + thisGap
+    }
+  })
 
   //set up lightbox
   const lightbox = document.createElement('div');
@@ -40,7 +64,9 @@ window.addEventListener("load", (event) => {
     resetLightbox();
   });
 
-  sliderElements.forEach(slider => {
+  //Handle slider behaviour
+  sliderData.forEach(entry => {
+    const slider = entry.sliderEl;
     slider.addEventListener('click', function (e) {
       const slide = e.target.closest('.slide');
       if (!slide) return;
@@ -55,44 +81,39 @@ window.addEventListener("load", (event) => {
 
       lightbox.style.display = "flex";
     });
-    //set up slider variables
-    let thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
-    let delay = parseFloat(slider.dataset.delay) || 0;
-    let speed = parseFloat(slider.dataset.speed) || 5000;
-    let contentWidth = parseFloat(slider.dataset.size) || 500;
-    const totalSlideSize = contentWidth + thisGap;
-    const prevBtn = slider.querySelector('.sb-left');
-    const nextBtn = slider.querySelector('.sb-right');
-    const container = slider.querySelector('.slider-content-container')
-    let slides = slider.querySelectorAll('.slide');
-    let firstSlide = slides[0];
-    let lastSlide = slides[slides.length - 1];
-    let timeoutId;
 
-    if( thisGap != gap ) {
-      slider.style.paddingTop = `${thisGap}px`;
-      slider.style.paddingBottom = `${thisGap}px`;
+    if( slider.dataset.size != undefined && slider.dataset.fit != undefined ) {
+      console.error('data-size and data-fit cannot both be used, the slider will either work to specified slide size or fit the amount of slides specified.')
+      return
     }
 
+    let firstSlide = entry.slides[0];
+    let lastSlide = entry.slides[entry.slides.length - 1];
+    let timeoutId;
 
-    slides.forEach((slide) => {
+    if( entry.gap != gap ) {
+      slider.style.paddingTop = `${entry.gap}px`;
+      slider.style.paddingBottom = `${entry.gap}px`;
+    }
+
+    entry.slides.forEach((slide) => {
       const image = slide.querySelector('img');
       const video = slide.querySelector('video');
-      if( thisGap != gap ) {
+      if( entry.gap != gap ) {
         if(image) {
-        image.style.marginRight = `${thisGap}px`;
+        image.style.marginRight = `${entry.gap}px`;
         }
         if(video) {
-          video.style.marginRight = `${thisGap}px`;
+          video.style.marginRight = `${entry.gap}px`;
         }
       }
 
-      slide.style.width = `${totalSlideSize}px`;
+      slide.style.width = `${entry.totalSlideSize}px`;
       if(image) {
-        image.style.width = `${contentWidth}px`;
+        image.style.width = `${entry.contentWidth}px`;
       }
       if(video) {
-        video.style.width = `${contentWidth}px`;
+        video.style.width = `${entry.contentWidth}px`;
       }
     })
 
@@ -102,55 +123,55 @@ window.addEventListener("load", (event) => {
       }
       timeoutId = setTimeout(() => {
         slidesForward();
-      }, ( speed + delay ));
+      }, ( entry.speed + entry.delay ));
     }
 
     slider.addEventListener('mouseenter', () => {
-      prevBtn.style.opacity = '0.7';
-      nextBtn.style.opacity = '0.7';
+      entry.prevBtn.style.opacity = '0.7';
+      entry.nextBtn.style.opacity = '0.7';
     });
 
     slider.addEventListener('mouseleave', () => {
       if (window.matchMedia('(max-width: 768px)').matches) {
-        prevBtn.style.opacity = '0.7';
-        nextBtn.style.opacity = '0.7';
+        entry.prevBtn.style.opacity = '0.7';
+        entry.nextBtn.style.opacity = '0.7';
       } else {
-        prevBtn.style.opacity = '0';
-        nextBtn.style.opacity = '0';
+        entry.prevBtn.style.opacity = '0';
+        entry.nextBtn.style.opacity = '0';
       }
     });
 
     const prependSlides = () => {
-      container.style.transform = `translateX(${totalSlideSize}px)`;
+      entry.container.style.transform = `translateX(${entry.totalSlideSize}px)`;
       const lastSlideCopy = lastSlide.cloneNode(true);
-      container.prepend(lastSlideCopy);
+      entry.container.prepend(lastSlideCopy);
     }
 
     const appendSlides = () => {
       const firstSlideCopy = firstSlide.cloneNode(true);
-      container.append(firstSlideCopy);
+      entry.container.append(firstSlideCopy);
     }
 
     const updateSlides = () => {
-      slides = slider.querySelectorAll('.slide');
-      firstSlide = slides[0];
-      lastSlide = slides[slides.length - 1];
+      entry.slides = slider.querySelectorAll('.slide');
+      firstSlide = entry.slides[0];
+      lastSlide = entry.slides[entry.slides.length - 1];
     }
 
     const slidesForward = () => {
       if (!slider.classList.contains("controlsLocked")) {
-        if (delay) delay = 0;
+        if (entry.delay) entry.delay = 0;
         startTimeout();
         appendSlides();
-        container.style.transition = `transform ${transitionTime}s`;
-        container.style.transform = `translateX(-${totalSlideSize}px)`;
+        entry.container.style.transition = `transform ${transitionTime}s`;
+        entry.container.style.transform = `translateX(-${entry.totalSlideSize}px)`;
         slider.classList.add("controlsLocked");
         setTimeout(() => {
-          container.style.transition = "none";
+          entry.container.style.transition = "none";
           requestAnimationFrame(() => {
-            container.style.transform = "translateX(0px)";
-            container.offsetHeight;
-            container.style.transition = `transform ${transitionTime}s`;
+            entry.container.style.transform = "translateX(0px)";
+            entry.container.offsetHeight;
+            entry.container.style.transition = `transform ${transitionTime}s`;
             firstSlide.remove();
             updateSlides();
             slider.classList.remove("controlsLocked");
@@ -163,11 +184,11 @@ window.addEventListener("load", (event) => {
       if(!slider.classList.contains("controlsLocked")){
         startTimeout();
         prependSlides();
-        container.style.transition = "none";
-        container.style.transform = `translateX(-${totalSlideSize}px)`;
+        entry.container.style.transition = "none";
+        entry.container.style.transform = `translateX(-${entry.totalSlideSize}px)`;
         requestAnimationFrame(() => {
-          container.style.transition = `transform ${transitionTime}s`;
-          container.style.transform = "translateX(0px)";
+          entry.container.style.transition = `transform ${transitionTime}s`;
+          entry.container.style.transform = "translateX(0px)";
           slider.classList.add("controlsLocked");
           setTimeout(() => {
             lastSlide.remove();
@@ -180,12 +201,44 @@ window.addEventListener("load", (event) => {
 
     startTimeout();
 
-    prevBtn.addEventListener('click', () => {
+    entry.prevBtn.addEventListener('click', () => {
       slidesBack();
     });
 
-    nextBtn.addEventListener('click', () => {
+    entry.nextBtn.addEventListener('click', () => {
       slidesForward();
     });
+
+  });
+
+  function updateDynamicContentWidth(slider) {
+    const sliderWidth = slider.getBoundingClientRect().width;
+    const thisGap = slider.dataset.gap != undefined ? parseFloat(slider.dataset.gap) : gap;
+    const amountOfSlides = slider.dataset.fit = parseFloat(slider.dataset.fit);
+    const contentWidth = (sliderWidth - (thisGap * (amountOfSlides - 1 ))) / amountOfSlides;
+    return contentWidth;
+  }
+
+  window.addEventListener("resize", (event) => {
+    sliderData.forEach((entry) => {
+      if( entry.sliderEl.dataset.fit != undefined ) {
+        entry.contentWidth = updateDynamicContentWidth(entry.sliderEl);
+        entry.totalSlideSize = entry.contentWidth + entry.gap;
+        entry.slides.forEach((slide) => {
+          const image = slide.querySelector('img');
+          const video = slide.querySelector('video');
+          slide.style.width = `${entry.totalSlideSize}px`;
+          if(image) {
+            image.style.width = `${entry.contentWidth}px`;
+          }
+          if(video) {
+            video.style.width = `${entry.contentWidth}px`;
+          }
+        })
+      }
+    })
   });
 });
+
+
+
